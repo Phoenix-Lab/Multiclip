@@ -1,11 +1,10 @@
 object frmSettings: TfrmSettings
-  Left = 718
-  Top = 287
-  BorderIcons = [biSystemMenu]
+  Left = 715
+  Top = 288
   BorderStyle = bsDialog
-  Caption = #1056#1077#1076#1072#1082#1090#1086#1088' '#1085#1072#1089#1090#1088#1086#1077#1082' Multiclip'
-  ClientHeight = 273
-  ClientWidth = 241
+  Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
+  ClientHeight = 385
+  ClientWidth = 273
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -2131,286 +2130,284 @@ object frmSettings: TfrmSettings
   OldCreateOrder = False
   Position = poScreenCenter
   ShowHint = True
-  Visible = True
-  OnCreate = FormCreate
-  DesignSize = (
-    241
-    273)
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object pgcTabs: TPageControl
+  object lblMinWidth: TLabel
     Left = 8
-    Top = 8
-    Width = 225
-    Height = 225
-    ActivePage = tbsForm
-    HotTrack = True
-    TabOrder = 0
-    object tbsForm: TTabSheet
-      Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1086#1082#1085#1072
-      DesignSize = (
-        217
-        197)
-      object lblWidthMin: TLabel
-        Left = 8
-        Top = 12
-        Width = 117
-        Height = 13
-        Caption = #1064#1080#1088#1080#1085#1072' '#1074' '#1089#1078#1072#1090#1086#1084' '#1074#1080#1076#1077
-      end
-      object lblAlpha: TLabel
-        Left = 8
-        Top = 44
-        Width = 72
-        Height = 13
-        Caption = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100
-      end
-      object lblDelay: TLabel
-        Left = 8
-        Top = 76
-        Width = 132
-        Height = 13
-        Caption = #1047#1072#1076#1077#1088#1078#1082#1072' '#1087#1077#1088#1077#1076' '#1089#1078#1072#1090#1080#1077#1084
-      end
-      object lblWndPos: TLabel
-        Left = 8
-        Top = 116
-        Width = 71
-        Height = 13
-        Caption = #1055#1086#1079#1080#1094#1080#1103' '#1086#1082#1085#1072
-      end
-      object lblTargetWnd: TLabel
-        Left = 8
-        Top = 152
-        Width = 131
-        Height = 13
-        Caption = #1047#1072#1075#1086#1083#1086#1074#1086#1082' '#1094#1077#1083#1077#1074#1086#1075#1086' '#1086#1082#1085#1072
-      end
-      object speWidthMin: TSpinEdit
-        Left = 152
-        Top = 8
-        Width = 57
-        Height = 22
-        MaxValue = 500
-        MinValue = 132
-        TabOrder = 0
-        Value = 132
-      end
-      object speDelay: TSpinEdit
-        Left = 152
-        Top = 72
-        Width = 57
-        Height = 22
-        Increment = 5
-        MaxValue = 5000
-        MinValue = 0
-        TabOrder = 1
-        Value = 1000
-      end
-      object cbbWndPos: TComboBox
-        Left = 88
-        Top = 112
-        Width = 121
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        ItemIndex = 1
-        TabOrder = 3
-        Text = 'Right'
-        Items.Strings = (
-          'Left'
-          'Right'
-          'Manual')
-      end
-      object speAlpha: TSpinEdit
-        Left = 152
-        Top = 40
-        Width = 57
-        Height = 22
-        MaxValue = 255
-        MinValue = 0
-        TabOrder = 2
-        Value = 160
-      end
-      object cbbTargetWnd: TComboBox
-        Left = 8
-        Top = 168
-        Width = 201
-        Height = 21
-        AutoDropDown = True
-        AutoCloseUp = True
-        Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
-        TabOrder = 4
-        Items.Strings = (
-          'Tanki Online - Avant Browser'
-          'Tanki Online - Google Chrome'
-          'Tanki Online - Internet Explorer'
-          'Tanki Online - Mozilla Firefox'
-          'Tanki Online - Opera')
-      end
-    end
-    object tbsList: TTabSheet
-      Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099' '#1089#1087#1080#1089#1082#1072
-      ImageIndex = 1
-      DesignSize = (
-        217
-        197)
-      object lblHKFontSz: TLabel
-        Left = 8
-        Top = 36
-        Width = 140
-        Height = 13
-        Caption = #1042#1099#1089#1086#1090#1072' '#1074#1090#1086#1088#1080#1095#1085#1086#1075#1086' '#1096#1088#1080#1092#1090#1072
-      end
-      object lblFontSz: TLabel
-        Left = 8
-        Top = 12
-        Width = 141
-        Height = 13
-        Caption = #1042#1099#1089#1086#1090#1072' '#1087#1077#1088#1074#1080#1095#1085#1086#1075#1086' '#1096#1088#1080#1092#1090#1072
-      end
-      object bvlSeparator: TBevel
-        Left = 8
-        Top = 56
-        Width = 201
-        Height = 9
-        Anchors = [akLeft, akTop, akRight]
-      end
-      object lblList: TLabel
-        Left = 8
-        Top = 76
-        Width = 54
-        Height = 13
-        Caption = #1062#1074#1077#1090' '#1092#1086#1085#1072
-      end
-      object lblSelected: TLabel
-        Left = 8
-        Top = 100
-        Width = 84
-        Height = 13
-        Caption = #1062#1074#1077#1090' '#1074#1099#1076#1077#1083#1077#1085#1080#1103
-      end
-      object lblText: TLabel
-        Left = 8
-        Top = 124
-        Width = 62
-        Height = 13
-        Caption = #1062#1074#1077#1090' '#1090#1077#1082#1089#1090#1072
-      end
-      object lblHotkey: TLabel
-        Left = 8
-        Top = 148
-        Width = 74
-        Height = 13
-        Caption = #1062#1074#1077#1090' '#1082#1086#1084#1072#1085#1076#1099
-      end
-      object lblSeparator: TLabel
-        Left = 8
-        Top = 172
-        Width = 93
-        Height = 13
-        Caption = #1062#1074#1077#1090' '#1088#1072#1079#1076#1077#1083#1080#1090#1077#1083#1103
-      end
-      object speHKFontSz: TSpinEdit
-        Left = 168
-        Top = 31
-        Width = 41
-        Height = 22
-        MaxValue = 36
-        MinValue = 0
-        TabOrder = 0
-        Value = 15
-      end
-      object speFontSz: TSpinEdit
-        Left = 168
-        Top = 7
-        Width = 41
-        Height = 22
-        Increment = 2
-        MaxValue = 72
-        MinValue = 0
-        TabOrder = 1
-        Value = 30
-      end
-      object crbList: TColorBox
-        Left = 120
-        Top = 72
-        Width = 89
-        Height = 22
-        DefaultColorColor = clWhite
-        Selected = clGreen
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
-        ItemHeight = 16
-        TabOrder = 2
-        OnSelect = ColorBoxSelect
-      end
-      object crbSelected: TColorBox
-        Left = 120
-        Top = 96
-        Width = 89
-        Height = 22
-        DefaultColorColor = clLime
-        Selected = clLime
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
-        ItemHeight = 16
-        TabOrder = 3
-        OnSelect = ColorBoxSelect
-      end
-      object crbText: TColorBox
-        Left = 120
-        Top = 120
-        Width = 89
-        Height = 22
-        Selected = clWhite
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
-        ItemHeight = 16
-        TabOrder = 4
-        OnSelect = ColorBoxSelect
-      end
-      object crbHotkey: TColorBox
-        Left = 120
-        Top = 144
-        Width = 89
-        Height = 22
-        DefaultColorColor = clOlive
-        Selected = clYellow
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
-        ItemHeight = 16
-        TabOrder = 5
-        OnSelect = ColorBoxSelect
-      end
-      object crbSeparator: TColorBox
-        Left = 120
-        Top = 168
-        Width = 89
-        Height = 22
-        Selected = clBlue
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
-        ItemHeight = 16
-        TabOrder = 6
-        OnSelect = ColorBoxSelect
-      end
-    end
+    Top = 12
+    Width = 117
+    Height = 13
+    Caption = #1064#1080#1088#1080#1085#1072' '#1074' '#1089#1078#1072#1090#1086#1084' '#1074#1080#1076#1077
+    FocusControl = speMinWidth
   end
-  object bbnOK: TBitBtn
-    Left = 40
-    Top = 240
-    Width = 75
-    Height = 25
-    Anchors = [akLeft, akBottom]
+  object lblWindowPosition: TLabel
+    Left = 8
+    Top = 92
+    Width = 71
+    Height = 13
+    Caption = #1055#1086#1079#1080#1094#1080#1103' '#1086#1082#1085#1072
+    FocusControl = cbbWindowPosition
+  end
+  object lblDelay: TLabel
+    Left = 8
+    Top = 60
+    Width = 132
+    Height = 13
+    Caption = #1047#1072#1076#1077#1088#1078#1082#1072' '#1087#1077#1088#1077#1076' '#1089#1078#1072#1090#1080#1077#1084
+    FocusControl = speDelay
+  end
+  object lblAlpha: TLabel
+    Left = 8
+    Top = 36
+    Width = 72
+    Height = 13
+    Caption = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100
+    FocusControl = speAlpha
+  end
+  object lblHotKeyFontSize: TLabel
+    Left = 8
+    Top = 172
+    Width = 164
+    Height = 13
+    Caption = #1056#1072#1079#1084#1077#1088' '#1096#1088#1080#1092#1090#1072' '#1075#1086#1088#1103#1095#1080#1093' '#1082#1083#1072#1074#1080#1096
+    FocusControl = speHotKeyFontSize
+  end
+  object lblSeparator: TLabel
+    Left = 8
+    Top = 324
+    Width = 93
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1088#1072#1079#1076#1077#1083#1080#1090#1077#1083#1103
+    FocusControl = crbSeparator
+  end
+  object lblMainHotKey: TLabel
+    Left = 8
+    Top = 276
+    Width = 125
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1086#1089#1085#1086#1074#1085#1086#1081' '#1082#1086#1084#1072#1085#1076#1099
+    FocusControl = crbMainHotKey
+  end
+  object lblText: TLabel
+    Left = 8
+    Top = 252
+    Width = 118
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1086#1089#1085#1086#1074#1085#1086#1075#1086' '#1090#1077#1082#1089#1090#1072
+    FocusControl = crbText
+  end
+  object lblSelected: TLabel
+    Left = 8
+    Top = 228
+    Width = 147
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1074#1099#1076#1077#1083#1077#1085#1085#1086#1075#1086' '#1101#1083#1077#1084#1077#1085#1090#1072
+    FocusControl = crbSelected
+  end
+  object lblList: TLabel
+    Left = 8
+    Top = 204
+    Width = 93
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1092#1086#1085#1072' '#1089#1087#1080#1089#1082#1072
+    FocusControl = crbList
+  end
+  object bvlSeparator: TBevel
+    Left = 8
+    Top = 192
+    Width = 257
+    Height = 1
+  end
+  object lblCommandFontSize: TLabel
+    Left = 8
+    Top = 148
+    Width = 118
+    Height = 13
+    Caption = #1056#1072#1079#1084#1077#1088' '#1096#1088#1080#1092#1090#1072' '#1090#1077#1082#1089#1090#1072
+    FocusControl = speCommandFontSize
+  end
+  object lblHotKeyPosition: TLabel
+    Left = 8
+    Top = 116
+    Width = 127
+    Height = 13
+    Caption = #1055#1086#1079#1080#1094#1080#1103' '#1075#1086#1088#1103#1095#1080#1093' '#1082#1083#1072#1074#1080#1096
+    FocusControl = cbbHotKeyPosition
+  end
+  object lblAltHotKey: TLabel
+    Left = 8
+    Top = 300
+    Width = 159
+    Height = 13
+    Caption = #1062#1074#1077#1090' '#1072#1083#1100#1090#1077#1088#1085#1072#1090#1080#1074#1085#1086#1081' '#1082#1086#1084#1072#1085#1076#1099
+    FocusControl = crbAltHotKey
+  end
+  object speAlpha: TSpinEdit
+    Left = 176
+    Top = 32
+    Width = 89
+    Height = 22
+    MaxValue = 255
+    MinValue = 0
     TabOrder = 1
-    OnClick = bbnOKClick
-    Kind = bkOK
+    Value = 160
   end
-  object bbnCancel: TBitBtn
-    Left = 128
-    Top = 240
+  object cbbWindowPosition: TComboBox
+    Left = 176
+    Top = 88
+    Width = 89
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    ItemIndex = 1
+    TabOrder = 3
+    Text = 'Right'
+    Items.Strings = (
+      'Left'
+      'Right'
+      'Manual')
+  end
+  object speDelay: TSpinEdit
+    Left = 176
+    Top = 56
+    Width = 89
+    Height = 22
+    Increment = 5
+    MaxValue = 5000
+    MinValue = 0
+    TabOrder = 2
+    Value = 300
+  end
+  object speMinWidth: TSpinEdit
+    Left = 176
+    Top = 8
+    Width = 89
+    Height = 22
+    MaxValue = 350
+    MinValue = 10
+    TabOrder = 0
+    Value = 20
+  end
+  object crbSeparator: TColorBox
+    Left = 176
+    Top = 320
+    Width = 89
+    Height = 22
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 12
+    OnSelect = ColorBoxSelect
+  end
+  object crbMainHotKey: TColorBox
+    Left = 176
+    Top = 272
+    Width = 89
+    Height = 22
+    DefaultColorColor = clOlive
+    Selected = clOlive
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 10
+    OnSelect = ColorBoxSelect
+  end
+  object crbText: TColorBox
+    Left = 176
+    Top = 248
+    Width = 89
+    Height = 22
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 9
+    OnSelect = ColorBoxSelect
+  end
+  object crbSelected: TColorBox
+    Left = 176
+    Top = 224
+    Width = 89
+    Height = 22
+    DefaultColorColor = clLime
+    Selected = clLime
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 8
+    OnSelect = ColorBoxSelect
+  end
+  object crbList: TColorBox
+    Left = 176
+    Top = 200
+    Width = 89
+    Height = 22
+    DefaultColorColor = clWhite
+    Selected = clWhite
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 7
+    OnSelect = ColorBoxSelect
+  end
+  object speCommandFontSize: TSpinEdit
+    Left = 176
+    Top = 144
+    Width = 89
+    Height = 22
+    Increment = 2
+    MaxValue = 72
+    MinValue = 0
+    TabOrder = 5
+    Value = 30
+  end
+  object speHotKeyFontSize: TSpinEdit
+    Left = 176
+    Top = 168
+    Width = 89
+    Height = 22
+    MaxValue = 36
+    MinValue = 0
+    TabOrder = 6
+    Value = 15
+  end
+  object cbbHotKeyPosition: TComboBox
+    Left = 176
+    Top = 112
+    Width = 89
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    ItemIndex = 0
+    TabOrder = 4
+    Text = 'Down'
+    Items.Strings = (
+      'Down'
+      'Right')
+  end
+  object crbAltHotKey: TColorBox
+    Left = 176
+    Top = 296
+    Width = 89
+    Height = 22
+    DefaultColorColor = clGreen
+    Selected = clGreen
+    Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+    ItemHeight = 16
+    TabOrder = 11
+    OnSelect = ColorBoxSelect
+  end
+  object OKButton: TButton
+    Left = 56
+    Top = 352
     Width = 75
     Height = 25
-    Anchors = [akRight, akBottom]
-    TabOrder = 2
-    OnClick = bbnCancelClick
-    Kind = bkCancel
+    Caption = 'OK'
+    ModalResult = 1
+    TabOrder = 13
+  end
+  object CancelButton: TButton
+    Left = 144
+    Top = 352
+    Width = 75
+    Height = 25
+    Caption = #1054#1090#1084#1077#1085#1072
+    ModalResult = 2
+    TabOrder = 14
   end
 end
