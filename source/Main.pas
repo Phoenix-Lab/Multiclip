@@ -431,7 +431,7 @@ begin
     WriteInteger(sIniSettings, sIniSettingsHotKeyFontSize, HotKeyFontSize);
     WriteString(sIniSettings, sIniSettingsWindowPosition, WindowPosition);
     WriteString(sIniSettings, sIniSettingsHotKeyPosition, HotKeyPosition);
-    WriteString(sIniSettings, sIniSettingsCommandFileName, ExtractRelativePath(GetCurrentDir, CommandListName));
+    WriteString(sIniSettings, sIniSettingsCommandFileName, ExtractRelativePath(IncludeTrailingPathDelimiter(GetCurrentDir), CommandListName));
     WriteString(sIniColors, sIniColorsList, ColorToString(clList));
     WriteString(sIniColors, sIniColorsSelected, ColorToString(clSelected));
     WriteString(sIniColors, sIniColorsText, ColorToString(clText));

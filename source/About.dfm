@@ -89,7 +89,7 @@ object AboutBox: TAboutBox
       Top = 32
       Width = 79
       Height = 13
-      Caption = #1042#1077#1088#1089#1080#1103' 4.0.0.44'
+      Caption = #1042#1077#1088#1089#1080#1103' 4.0.1.45'
       IsControl = True
     end
     object Copyright: TLabel
