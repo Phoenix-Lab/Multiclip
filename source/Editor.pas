@@ -54,7 +54,8 @@ var
 
 implementation
 
-uses Menus, CmdList;
+uses
+  Menus, CmdList;
 
 const
   sAddEmptyString = 'ƒобавление пустой команды не имеет смысла.';
@@ -64,8 +65,8 @@ const
 
 procedure TfrmEditor.lbeHotKeyChange(Sender: TObject);
 begin
-  if TextToShortCut((Sender as TLabeledEdit).Text) > 0
-  then (Sender as TLabeledEdit).Font.Color := clBlack
+  if TextToShortCut((Sender as TLabeledEdit).Text) > 0 then
+    (Sender as TLabeledEdit).Font.Color := clBlack
   else (Sender as TLabeledEdit).Font.Color := clRed;
 end;
 
@@ -81,13 +82,16 @@ var
   WindowNameLength: Integer;
 begin
   ActiveWindowHandle := GetForegroundWindow;
-  if ActiveWindowHandle <> Handle then begin
+  if ActiveWindowHandle <> Handle then
+  begin
     WindowNameLength := GetWindowTextLength(ActiveWindowHandle);
-    if WindowNameLength > 0 then begin
+    if WindowNameLength > 0 then
+    begin
       GetMem(WindowName, WindowNameLength + 1);
       try
-        if GetWindowText(ActiveWindowHandle, WindowName, WindowNameLength + 1) > 0
-        then lbeTargetWindowName.Text := StrPas(WindowName)
+        if GetWindowText(ActiveWindowHandle, WindowName,
+          WindowNameLength + 1) > 0 then
+          lbeTargetWindowName.Text := StrPas(WindowName)
         else lbeTargetWindowName.Text := SysErrorMessage(GetLastError);
       finally
         FreeMem(WindowName);
@@ -101,7 +105,8 @@ end;
 procedure TfrmEditor.ltvCommandsEdited(Sender: TObject; Item: TListItem;
   var S: String);
 begin
-  if S = EmptyStr then begin
+  if SameText(S, EmptyStr) then
+  begin
     Item.Checked := False;
     Item.SubItems[0] := EmptyStr;
     Item.SubItems[1] := EmptyStr;
@@ -119,14 +124,19 @@ end;
 
 procedure TfrmEditor.btnCommitClick(Sender: TObject);
 begin
-  if lbeText.Text > EmptyStr then begin
+  if SameText(lbeText.Text, EmptyStr) then
+    lbeText.SetFocus
+  else
+  begin
     ltvCommands.Selected.Checked := ckbDelay.Checked;
     ltvCommands.Selected.Caption := lbeText.Text;
-    if TextToShortCut(lbeHotKey.Text) = 0 then ltvCommands.Selected.SubItems[0] := lbeHotKey.Text
+    if TextToShortCut(lbeHotKey.Text) = 0 then
+      ltvCommands.Selected.SubItems[0] := lbeHotKey.Text
     else ltvCommands.Selected.SubItems[0] := ShortCutToText(TextToShortCut(lbeHotKey.Text));
-    if TextToShortCut(lbeAltHotKey.Text) = 0 then ltvCommands.Selected.SubItems[1] := lbeAltHotKey.Text
+    if TextToShortCut(lbeAltHotKey.Text) = 0 then
+      ltvCommands.Selected.SubItems[1] := lbeAltHotKey.Text
     else ltvCommands.Selected.SubItems[1] := ShortCutToText(TextToShortCut(lbeAltHotKey.Text));
-  end else lbeText.SetFocus;
+  end;
 end;
 
 procedure TfrmEditor.btnRollbackClick(Sender: TObject);
@@ -153,7 +163,8 @@ end;
 
 procedure TfrmEditor.AddCommand(const Index: Shortint);
 begin
-  with ltvCommands.Items.Insert(Index) do begin
+  with ltvCommands.Items.Insert(Index) do
+  begin
     SubItems.Append(EmptyStr);
     SubItems.Append(EmptyStr);
     MakeVisible(False);
@@ -166,7 +177,8 @@ var
   I: Shortint;
 begin
   for I := 0 to gpbHeader.ControlCount - 1 do
-    if gpbHeader.Controls[I] is TLabeledEdit then (gpbHeader.Controls[I] as TLabeledEdit).Clear;
+    if gpbHeader.Controls[I] is TLabeledEdit then
+      (gpbHeader.Controls[I] as TLabeledEdit).Clear;
   ltvCommands.Clear;
   ClearEditPanel;
 end;
@@ -183,20 +195,25 @@ procedure TfrmEditor.LoadFromList;
 var
   I: Shortint;
 begin
-  if Assigned(Commands) then begin
+  if Assigned(Commands) then
+  begin
     lbeTargetWindowName.Text := Commands.TargetWindowName;
     lbeOpenKey.Text := Commands.OpenKey;
     lbeSendKey.Text := Commands.SendKey;
     lbeAltOpenKey.Text := Commands.AltOpenKey;
     lbeAltSendKey.Text := Commands.AltSendKey;
-    for I := 0 to Commands.Count - 1 do with ltvCommands.Items.Add do begin
-      Caption := Commands[I].Text;
-      Checked := Commands[I].IsDelay;
-      if Assigned(Commands[I].HotKey) then SubItems.Append(Commands[I].HotKey.Text)
-      else SubItems.Append(EmptyStr);
-      if Assigned(Commands[I].AltHotKey) then SubItems.Append(Commands[I].AltHotKey.Text)
-      else SubItems.Append(EmptyStr);
-    end;
+    for I := 0 to Commands.Count - 1 do
+      with ltvCommands.Items.Add do
+      begin
+        Caption := Commands[I].Text;
+        Checked := Commands[I].IsDelay;
+        if Assigned(Commands[I].HotKey) then
+          SubItems.Append(Commands[I].HotKey.Text)
+        else SubItems.Append(EmptyStr);
+        if Assigned(Commands[I].AltHotKey) then
+          SubItems.Append(Commands[I].AltHotKey.Text)
+        else SubItems.Append(EmptyStr);
+      end;
   end;
 end;
 
@@ -210,19 +227,27 @@ var
 begin
   Buffer := TStringList.Create;
   try
-    if (lbeTargetWindowName.Text > EmptyStr)
-      or (lbeOpenKey.Text > EmptyStr) or (lbeAltOpenKey.Text > EmptyStr)
-      or (lbeSendKey.Text > EmptyStr) or (lbeAltSendKey.Text > EmptyStr)
-    then Buffer.Append(sCommandListSignature + TAB + lbeTargetWindowName.Text
-      + TAB + lbeOpenKey.Text + TAB + lbeSendKey.Text + TAB + lbeAltOpenKey.Text
-      + TAB + lbeAltSendKey.Text);
-    for I := 0 to ltvCommands.Items.Count - 1 do with ltvCommands.Items[I] do
-      if Caption = EmptyStr then Buffer.Append(Caption) else begin
-        if Checked then Serialize := '%' + Caption else Serialize := Caption;
-        if (SubItems[0] > EmptyStr) or (SubItems[1] > EmptyStr) then Serialize := Serialize + TAB + SubItems[0];
-        if SubItems[1] > EmptyStr then Serialize := Serialize + TAB + SubItems[1];
-        Buffer.Append(Serialize);
-      end;
+    if not SameText(lbeTargetWindowName.Text + lbeOpenKey.Text + lbeSendKey.Text
+      + lbeAltOpenKey.Text + lbeAltSendKey.Text, EmptyStr)
+    then
+      Buffer.Append(sCommandListSignature + TAB + lbeTargetWindowName.Text + TAB
+        + lbeOpenKey.Text + TAB + lbeSendKey.Text + TAB + lbeAltOpenKey.Text
+        + TAB + lbeAltSendKey.Text);
+    for I := 0 to ltvCommands.Items.Count - 1 do
+      with ltvCommands.Items[I] do
+        if SameText(Caption, EmptyStr) then
+          Buffer.Append(Caption)
+        else
+        begin
+          if Checked then
+            Serialize := '%' + Caption
+          else Serialize := Caption;
+          if not SameText(SubItems[0] + SubItems[1], EmptyStr) then
+            Serialize := Serialize + TAB + SubItems[0];
+          if not SameText(SubItems[1], EmptyStr) then
+            Serialize := Serialize + TAB + SubItems[1];
+          Buffer.Append(Serialize);
+        end;
     Buffer.SaveToFile(FileName);
   finally
     Buffer.Free;

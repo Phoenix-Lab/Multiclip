@@ -2,7 +2,8 @@ unit CmdList;
 
 interface
 
-uses SysUtils, Classes, Contnrs;
+uses
+  SysUtils, Classes, Contnrs;
 
 type
   THotKey = class
@@ -68,7 +69,8 @@ var
 
 implementation
 
-uses Windows, StrUtils, Menus, Main;
+uses
+  Windows, StrUtils, Menus, Main;
 
 const
   sAtomPrefix = 'Multiclip_';
@@ -79,7 +81,8 @@ const
 constructor TCommandList.Create(const FileName: string);
 begin
   FList := TObjectList.Create;
-  if FileExists(FileName) then LoadFromFile(FileName);
+  if FileExists(FileName) then
+    LoadFromFile(FileName);
   RegisterHotKeys;
 end;
 
@@ -96,7 +99,9 @@ end;
 
 function TCommandList.GetItem(Index: Byte): TCommand;
 begin
-  if Index < Count then Result := FList[Index] as TCommand else Result := nil;
+  if Index < Count then
+    Result := FList[Index] as TCommand
+  else Result := nil;
 end;
 
 procedure TCommandList.LoadFromFile(const FileName: string);
@@ -111,9 +116,12 @@ begin
   Lexer.Delimiter := TAB;
   try
     Buffer.LoadFromFile(FileName);
-    if Buffer.Count = 0 then raise EReadError.CreateFmt('Файл "%s" пуст', [FileName]);
-    Lexer.DelimitedText := '"' + StringReplace(Buffer[0], TAB, '"' + TAB + '"', [rfReplaceAll]) + '"';
-    if (Lexer.Count > 0) and (Lexer[0] = sCommandListSignature) then begin
+    if Buffer.Count = 0 then
+      raise EReadError.CreateFmt('Файл "%s" пуст', [FileName]);
+    Lexer.DelimitedText := '"' + StringReplace(Buffer[0], TAB, '"' + TAB + '"',
+      [rfReplaceAll]) + '"';
+    if (Lexer.Count > 0) and SameText(Lexer[0], sCommandListSignature) then
+    begin
       FTargetWindowName := Lexer[1];
       FOpenKey := Lexer[2];
       FSendKey := Lexer[3];
@@ -121,10 +129,13 @@ begin
       FAltSendKey := Lexer[5];
       Buffer.Delete(0);
     end;
-    if FSendKey = EmptyStr then FSendKey := sDefaultHotKey;
-    if FAltSendKey = EmptyStr then FAltSendKey := sDefaultHotKey;
+    if SameText(FSendKey, EmptyStr) then
+      FSendKey := sDefaultHotKey;
+    if SameText(FAltSendKey, EmptyStr) then
+      FAltSendKey := sDefaultHotKey;
     FList.Clear;
-    for I := 0 to Buffer.Count - 1 do FList.Add(TCommand.Create(Buffer[I]));
+    for I := 0 to Buffer.Count - 1 do
+      FList.Add(TCommand.Create(Buffer[I]));
   finally
     Lexer.Free;
     Buffer.Free;
@@ -135,10 +146,14 @@ procedure TCommandList.RegisterHotKeys;
 var
   I: Shortint;
 begin
-  for I := 0 to Count - 1 do with FList[I] as TCommand do begin
-    if Assigned(HotKey) then HotKey.IsRegister := True;
-    if Assigned(AltHotKey) then AltHotKey.IsRegister := True;
-  end;
+  for I := 0 to Count - 1 do
+    with FList[I] as TCommand do
+    begin
+      if Assigned(HotKey) then
+        HotKey.IsRegister := True;
+      if Assigned(AltHotKey) then
+        AltHotKey.IsRegister := True;
+    end;
 end;
 
 procedure TCommandList.SaveToFile(const FileName: string);
@@ -151,19 +166,31 @@ var
 begin
   Buffer := TStringList.Create;
   try
-    if (TargetWindowName > EmptyStr) or (OpenKey > EmptyStr) or (SendKey > EmptyStr)
-      or (AltOpenKey > EmptyStr) or (AltSendKey > EmptyStr)
-    then Buffer.Append(sCommandListSignature + TAB + TargetWindowName + TAB
-      + OpenKey + TAB + SendKey + TAB + AltOpenKey + TAB + AltSendKey);
-    for I := 0 to Count - 1 do if List[I].Text = EmptyStr then Buffer.Append(EmptyStr) else begin
-      if List[I].IsDelay then Serialize := '%' + List[I].Text else Serialize := List[I].Text;
-      if Assigned(List[I].AltHotKey) then begin
-        Serialize := Serialize + TAB;
-        if Assigned(List[I].HotKey) then Serialize := Serialize + List[I].HotKey.Text;
-        Serialize := Serialize + TAB + List[I].AltHotKey.Text;
-      end else if Assigned(List[I].HotKey) then Serialize := Serialize + TAB + List[I].HotKey.Text;
-      Buffer.Append(Serialize);
-    end;
+    if not SameText(TargetWindowName + OpenKey + SendKey + AltOpenKey
+      + AltSendKey, EmptyStr)
+    then
+      Buffer.Append(sCommandListSignature + TAB + TargetWindowName + TAB
+        + OpenKey + TAB + SendKey + TAB + AltOpenKey + TAB + AltSendKey);
+    for I := 0 to Count - 1 do
+      if SameText(List[I].Text, EmptyStr) then
+        Buffer.Append(EmptyStr)
+      else
+      begin
+        if List[I].IsDelay then
+          Serialize := '%' + List[I].Text
+        else Serialize := List[I].Text;
+        if Assigned(List[I].AltHotKey) then
+        begin
+          Serialize := Serialize + TAB;
+          if Assigned(List[I].HotKey) then
+            Serialize := Serialize + List[I].HotKey.Text;
+          Serialize := Serialize + TAB + List[I].AltHotKey.Text;
+        end
+        else
+          if Assigned(List[I].HotKey) then
+            Serialize := Serialize + TAB + List[I].HotKey.Text;
+        Buffer.Append(Serialize);
+      end;
     Buffer.SaveToFile(FileName);
   finally
     Buffer.Free;
@@ -174,10 +201,14 @@ procedure TCommandList.UnregisterHotKeys;
 var
   I: Shortint;
 begin
-  for I := 0 to Count - 1 do with FList[I] as TCommand do begin
-    if Assigned(HotKey) then HotKey.IsRegister := False;
-    if Assigned(AltHotKey) then AltHotKey.IsRegister := False;
-  end;
+  for I := 0 to Count - 1 do
+    with FList[I] as TCommand do
+    begin
+      if Assigned(HotKey) then
+        HotKey.IsRegister := False;
+      if Assigned(AltHotKey) then
+        AltHotKey.IsRegister := False;
+    end;
 end;
 
 { THotKey }
@@ -189,31 +220,43 @@ begin
   FIsRegister := False;
   FText := AText;
   Shortcut := TextToShortCut(AText);
-  if Shortcut > 0 then begin
+  if Shortcut = 0 then
+    FAtom := 0
+  else
+  begin
     FAtom := GlobalFindAtom(PChar(sAtomPrefix + AText));
-    if FAtom = 0 then FAtom := GlobalAddAtom(PChar(sAtomPrefix + AText));
-    if Shortcut and scShift > 0 then FModifiers := FModifiers or MOD_SHIFT;
-    if Shortcut and scCtrl > 0 then FModifiers := FModifiers or MOD_CONTROL;
-    if Shortcut and scAlt > 0 then FModifiers := FModifiers or MOD_ALT;
+    if FAtom = 0 then
+      FAtom := GlobalAddAtom(PChar(sAtomPrefix + AText));
+    if Shortcut and scShift > 0 then
+      FModifiers := FModifiers or MOD_SHIFT;
+    if Shortcut and scCtrl > 0 then
+      FModifiers := FModifiers or MOD_CONTROL;
+    if Shortcut and scAlt > 0 then
+      FModifiers := FModifiers or MOD_ALT;
     FVirtualCode := Byte(Shortcut);
-  end else FAtom := 0;
+  end;
 end;
 
 destructor THotKey.Destroy;
 begin
   IsRegister := False;
-  if FAtom > 0 then GlobalDeleteAtom(FAtom);
+  if FAtom > 0 then
+    GlobalDeleteAtom(FAtom);
   inherited;
 end;
 
 procedure THotKey.SetRegister(const Value: Boolean);
 begin
-  if FAtom = 0 then FIsRegister := False else
+  if FAtom = 0 then
+    FIsRegister := False
+  else
     if not FIsRegister and Value then
-      FIsRegister := RegisterHotKey(MainForm.Handle, FAtom, FModifiers, FVirtualCode)
-    else if FIsRegister and not Value then
-      FIsRegister := not UnregisterHotKey(MainForm.Handle, FAtom)
-    else FIsRegister := Value;
+      FIsRegister := RegisterHotKey(MainForm.Handle, FAtom, FModifiers,
+        FVirtualCode)
+    else
+      if FIsRegister and not Value then
+        FIsRegister := not UnregisterHotKey(MainForm.Handle, FAtom)
+      else FIsRegister := Value;
 end;
 
 { TCommand }
@@ -225,16 +268,22 @@ var
   TabPosition: Byte;
 begin
   TabPosition := Pos(TAB, AText);
-  if TabPosition = 0 then FText := AText else begin
+  if TabPosition = 0 then
+    FText := AText
+  else
+  begin
     FText := LeftStr(AText, TabPosition - 1);
     Delete(AText, 1, TabPosition);
     TabPosition := Pos(TAB, AText);
-    if TabPosition = 0 then HotKey := THotKey.Create(AText) else begin
+    if TabPosition = 0 then
+      HotKey := THotKey.Create(AText)
+    else
+    begin
       HotKey := THotKey.Create(LeftStr(AText, TabPosition - 1));
       AltHotKey := THotKey.Create(RightStr(AText, Length(AText) - TabPosition));
     end;
   end;
-  FIsDelay := (FText > EmptyStr) and (FText[1] = '%');
+  FIsDelay := not SameText(FText, EmptyStr) and SameText(FText[1], '%');
   if FIsDelay then Delete(FText, 1, 1);
 end;
 

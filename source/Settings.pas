@@ -46,7 +46,8 @@ var
 
 implementation
 
-uses Main;
+uses
+  Main;
 
 {$R *.dfm}
 
@@ -69,8 +70,10 @@ end;
 
 procedure TfrmSettings.ColorBoxSelect(Sender: TObject);
 begin
-  if Sender is TColorBox then with (Sender as TColorBox) do
-    if Selected = clRed then Selected := DefaultColorColor;
+  if Sender is TColorBox then
+    with (Sender as TColorBox) do
+      if Selected = clRed then
+        Selected := DefaultColorColor;
 end;
 
 end.

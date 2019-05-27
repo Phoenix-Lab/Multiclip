@@ -30,7 +30,7 @@ uses
 
 procedure TAboutBox.ImageClick(Sender: TObject);
 begin
-  ShellExecute(0, 'open', PChar((Sender as TControl).Hint), nil, nil, SW_NORMAL);
+  ShellExecute(Handle, 'open', PChar((Sender as TControl).Hint), nil, nil, SW_SHOWNORMAL);
 end;
 
 end.

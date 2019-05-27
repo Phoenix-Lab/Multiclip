@@ -111,11 +111,18 @@ var
 procedure TMainForm.FormCanResize(Sender: TObject;
   var NewWidth, NewHeight: Integer; var Resize: Boolean);
 begin
-  if not IsChangeForm then begin
-    if AlphaBlend then NewWidth := Width else begin
+  if not IsChangeForm then
+  begin
+    if AlphaBlend then
+      NewWidth := Width
+    else
+    begin
       WidthMax := NewWidth;
-      if WindowPosition = 'Left' then Left := 0 else
-        if WindowPosition = 'Right' then Left := Screen.WorkAreaWidth - WidthMax;
+      if SameText(WindowPosition, 'Left') then
+        Left := Screen.WorkAreaLeft
+      else
+        if SameText(WindowPosition, 'Right') then
+          Left := Screen.WorkAreaWidth - WidthMax;
     end;
     NewHeight := Height;
   end;
@@ -147,62 +154,90 @@ procedure TMainForm.lsbCommandsDrawItem(Control: TWinControl; Index: Integer;
 const
   Gap = 2;
 begin
-  with lsbCommands.Canvas do if lsbCommands.Items[Index] = EmptyStr then begin
-    State := [odDisabled];
-    Brush.Color := clSeparator;
-    FillRect(Rect);
-  end else begin
-    if Index = lsbCommands.ItemIndex then begin
-      State := [odSelected];
-      Brush.Color := clSelected;
-    end else begin
-      State := [odDefault];
-      Brush.Color := clList;
+  with lsbCommands.Canvas do
+    if SameText(lsbCommands.Items[Index], EmptyStr) then
+    begin
+      State := [odInactive];
+      Brush.Color := clSeparator;
+      FillRect(Rect);
+    end
+    else
+    begin
+      if Index = lsbCommands.ItemIndex then
+      begin
+        State := [odSelected];
+        Brush.Color := clSelected;
+      end
+      else
+      begin
+        State := [odDefault];
+        Brush.Color := clList;
+      end;
+      FillRect(Rect);
+      Font.Height := CommandFontSize;
+      Font.Color := clText;
+      TextOut(Rect.Left + Gap, Rect.Top, lsbCommands.Items[Index]);
+      Font.Height := HotKeyFontSize;
+      if Assigned(Commands[Index].HotKey) then
+      begin
+        if Commands[Index].HotKey.IsRegister then
+          Font.Color := clHotKey
+        else Font.Color := clRed;
+        if SameText(HotKeyPosition, 'Down') then
+          TextOut(Rect.Left + Gap, Rect.Bottom - Font.Height,
+            Commands[Index].HotKey.Text)
+        else TextOut(Rect.Right - TextWidth(Commands[Index].HotKey.Text) - Gap,
+          Rect.Top, Commands[Index].HotKey.Text);
+      end;
+      if Assigned(Commands[Index].AltHotKey) then
+      begin
+        if Commands[Index].AltHotKey.IsRegister then
+          Font.Color := clAltHotKey
+        else Font.Color := clRed;
+        TextOut(Rect.Right - TextWidth(Commands[Index].AltHotKey.Text) - Gap,
+          Rect.Bottom - Font.Height, Commands[Index].AltHotKey.Text);
+      end;
     end;
-    FillRect(Rect);
-    Font.Height := CommandFontSize;
-    Font.Color := clText;
-    TextOut(Rect.Left + Gap, Rect.Top, lsbCommands.Items[Index]);
-    Font.Height := HotKeyFontSize;
-    if Assigned(Commands[Index].HotKey) then begin
-      if Commands[Index].HotKey.IsRegister then Font.Color := clHotKey else Font.Color := clRed;
-      if HotKeyPosition = 'Down' then TextOut(Rect.Left + Gap, Rect.Bottom - Font.Height, Commands[Index].HotKey.Text)
-      else TextOut(Rect.Right - TextWidth(Commands[Index].HotKey.Text) - Gap, Rect.Top, Commands[Index].HotKey.Text);
-    end;
-    if Assigned(Commands[Index].AltHotKey) then begin
-      if Commands[Index].AltHotKey.IsRegister then Font.Color := clAltHotKey else Font.Color := clRed;
-      TextOut(Rect.Right - TextWidth(Commands[Index].AltHotKey.Text) - Gap, Rect.Bottom - Font.Height, Commands[Index].AltHotKey.Text);
-    end;
-  end;
 end;
 
 procedure TMainForm.lsbCommandsMeasureItem(Control: TWinControl; Index: Integer;
   var Height: Integer);
 begin
-  if lsbCommands.Items[Index] = EmptyStr then Height := 2 else
-    if HotKeyPosition = 'Down' then Height := CommandFontSize + HotKeyFontSize else
-      if HotKeyPosition = 'Right' then Height := Max(CommandFontSize, HotKeyFontSize * 2)
+  if SameText(lsbCommands.Items[Index], EmptyStr) then
+    Height := 2
+  else
+    if SameText(HotKeyPosition, 'Down') then
+      Height := CommandFontSize + HotKeyFontSize
+    else
+      if SameText(HotKeyPosition, 'Right') then
+        Height := Max(CommandFontSize, HotKeyFontSize * 2)
       else Height := CommandFontSize;
 end;
 
 procedure TMainForm.lsbCommandsMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
-  if AlphaBlend then SwitchWindowState;
+  if AlphaBlend then
+    SwitchWindowState;
   lsbCommands.ItemIndex := lsbCommands.ItemAtPos(Point(X, Y), True);
   if (lsbCommands.Tag >= 0) and (lsbCommands.Tag <> lsbCommands.ItemIndex) then
-    lsbCommandsDrawItem(lsbCommands, lsbCommands.Tag, lsbCommands.ItemRect(lsbCommands.Tag), [odDefault]);
+    lsbCommandsDrawItem(lsbCommands, lsbCommands.Tag,
+      lsbCommands.ItemRect(lsbCommands.Tag), [odDefault]);
   lsbCommands.Tag := lsbCommands.ItemIndex;
 end;
 
 procedure TMainForm.lsbCommandsMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  if (Button <> mbMiddle) and (lsbCommands.Items[lsbCommands.ItemIndex] > EmptyStr) then begin
+  if (Button <> mbMiddle)
+    and not SameText(lsbCommands.Items[lsbCommands.ItemIndex], EmptyStr)
+  then
+  begin
     IsAltSend := Button = mbRight;
     Tag := lsbCommands.ItemIndex;
     tmrPrepareCommand.Enabled := True;
-    if not AlphaBlend then SwitchWindowState;
+    if not AlphaBlend then
+      SwitchWindowState;
   end;
 end;
 
@@ -220,19 +255,24 @@ end;
 
 procedure TMainForm.tmrMouseLeaveTimer(Sender: TObject);
 begin
-  if AlphaBlend = PtInRect(BoundsRect, Mouse.CursorPos) then SwitchWindowState;
+  if AlphaBlend = PtInRect(BoundsRect, Mouse.CursorPos) then
+    SwitchWindowState;
 end;
 
 procedure TMainForm.tmrPrepareCommandTimer(Sender: TObject);
 var
   ActiveWindow: THandle;
 begin
-  if Commands.TargetWindowName > EmptyStr then
+  if not SameText(Commands.TargetWindowName, EmptyStr) then
     ActiveWindow := FindWindow(nil, PChar(Commands.TargetWindowName))
   else ActiveWindow := GetForegroundWindow;
-  if ActiveWindow = Handle then ActiveWindow := 0;
-  if (ActiveWindow > 0) and (GetKeyState(VK_SHIFT) + GetKeyState(VK_CONTROL) + GetKeyState(VK_MENU) >= 0)
-  then begin
+  if ActiveWindow = Handle then
+    ActiveWindow := 0;
+  if (ActiveWindow > 0)
+    and (GetKeyState(VK_SHIFT) or GetKeyState(VK_CONTROL)
+      or GetKeyState(VK_MENU) = 0)
+  then
+  begin
     SendCommand(ActiveWindow, Tag, IsAltSend);
     tmrPrepareCommand.Enabled := False;
   end;
@@ -240,7 +280,8 @@ end;
 
 procedure TMainForm.mniFileNewClick(Sender: TObject);
 begin
-  if (frmEditor.ShowModal = mrOk) and svdCommandList.Execute then begin
+  if (frmEditor.ShowModal = mrOk) and svdCommandList.Execute then
+  begin
     CommandListName := svdCommandList.FileName;
     frmEditor.SaveToFile(CommandListName);
     Commands.Free;
@@ -252,7 +293,8 @@ end;
 
 procedure TMainForm.mniFileOpenClick(Sender: TObject);
 begin
-  if ondCommandList.Execute then begin
+  if ondCommandList.Execute then
+  begin
     CommandListName := ondCommandList.FileName;
     Commands.Free;
     Commands := TCommandList.Create(CommandListName);
@@ -262,7 +304,8 @@ end;
 
 procedure TMainForm.mniFileSaveAsClick(Sender: TObject);
 begin
-  if svdCommandList.Execute then Commands.SaveToFile(svdCommandList.FileName);
+  if svdCommandList.Execute then
+    Commands.SaveToFile(svdCommandList.FileName);
 end;
 
 procedure TMainForm.mniFileExitClick(Sender: TObject);
@@ -278,7 +321,8 @@ end;
 procedure TMainForm.mniToolsEditorClick(Sender: TObject);
 begin
   frmEditor.LoadFromList;
-  if frmEditor.ShowModal = mrOk then begin
+  if frmEditor.ShowModal = mrOk then
+  begin
     frmEditor.SaveToFile(CommandListName);
     Commands.Free;
     Commands := TCommandList.Create(CommandListName);
@@ -289,7 +333,8 @@ end;
 
 procedure TMainForm.mniToolsSettingsClick(Sender: TObject);
 begin
-  if frmSettings.ShowModal = mrOk then begin
+  if frmSettings.ShowModal = mrOk then
+  begin
     WidthMin := frmSettings.speMinWidth.Value;
     AlphaBlendValue := frmSettings.speAlpha.Value;
     tmrMouseLeave.Interval := frmSettings.speDelay.Value;
@@ -327,28 +372,43 @@ end;
 
 procedure TMainForm.OnHotKey(var Msg: TWMHotKey);
 var
-  I: Shortint;
+  I: Byte;
 begin
-  for I := 0 to Commands.Count - 1 do if Commands[I].Text > EmptyStr then begin
-    if Assigned(Commands[I].HotKey) and (Msg.HotKey = Commands[I].HotKey.Atom) then begin
-      IsAltSend := False;
-      Tag := I;
+  I := 0;
+  while (I < Commands.Count) and (Tag < 0) do
+  begin
+    if not SameText(Commands[I].Text, EmptyStr) then
+    begin
+      if Assigned(Commands[I].HotKey)
+        and (Msg.HotKey = Commands[I].HotKey.Atom)
+      then
+      begin
+        IsAltSend := False;
+        Tag := I;
+      end;
+      if Assigned(Commands[I].AltHotKey)
+        and (Msg.HotKey = Commands[I].AltHotKey.Atom)
+      then
+      begin
+        IsAltSend := True;
+        Tag := I;
+      end;
     end;
-    if Assigned(Commands[I].AltHotKey) and (Msg.HotKey = Commands[I].AltHotKey.Atom) then begin
-      IsAltSend := True;
-      Tag := I;
-    end;
-    tmrPrepareCommand.Enabled := Tag >= 0;
-    if Tag >= 0 then Break;
+    Inc(I);
   end;
+  tmrPrepareCommand.Enabled := Tag >= 0;
 end;
 
 procedure TMainForm.OnMove(var Msg: TWMMove);
 begin
-  if not IsChangeForm then begin
+  if not IsChangeForm then
+  begin
     IsChangeForm := True;
-    if Left = 0 then WindowPosition := 'Left' else
-      if Left + Width = Screen.WorkAreaWidth then WindowPosition := 'Right'
+    if Left = Screen.WorkAreaLeft then
+      WindowPosition := 'Left'
+    else
+      if Left + Width = Screen.WorkAreaWidth then
+        WindowPosition := 'Right'
       else WindowPosition := 'Manual';
     IsChangeForm := False;
   end;
@@ -360,14 +420,16 @@ var
 begin
   if Msg.DragRect.Left < Screen.WorkAreaLeft then
     OffsetX := Screen.WorkAreaLeft - Msg.DragRect.Left
-  else if Msg.DragRect.Right > Screen.WorkAreaRect.Right then
-    OffsetX := Screen.WorkAreaRect.Right - Msg.DragRect.Right
-  else OffsetX := 0;
+  else
+    if Msg.DragRect.Right > Screen.WorkAreaRect.Right then
+      OffsetX := Screen.WorkAreaRect.Right - Msg.DragRect.Right
+    else OffsetX := 0;
   if Msg.DragRect.Top < Screen.WorkAreaTop then
     OffsetY := Screen.WorkAreaTop - Msg.DragRect.Top
-  else if Msg.DragRect.Bottom > Screen.WorkAreaRect.Bottom then
-    OffsetY := Screen.WorkAreaRect.Bottom - Msg.DragRect.Bottom
-  else OffsetY := 0;
+  else
+    if Msg.DragRect.Bottom > Screen.WorkAreaRect.Bottom then
+      OffsetY := Screen.WorkAreaRect.Bottom - Msg.DragRect.Bottom
+    else OffsetY := 0;
   OffsetRect(Msg.DragRect^, OffsetX, OffsetY);
 end;
 
@@ -380,32 +442,41 @@ begin
   lsbCommands.Items.BeginUpdate;
   try
     lsbCommands.Clear;
-    for I := 0 to Commands.Count - 1 do lsbCommands.Items.Add(Commands[I].Text);
+    for I := 0 to Commands.Count - 1 do
+      lsbCommands.Items.Add(Commands[I].Text);
   finally
     lsbCommands.Items.EndUpdate;
   end;
   IsChangeForm := True;
   ClientHeight := lsbCommands.ItemRect(lsbCommands.Count - 1).Bottom;
-  if Height > Screen.WorkAreaHeight then Height := Screen.WorkAreaHeight;
+  if Height > Screen.WorkAreaHeight then
+    Height := Screen.WorkAreaHeight;
   IsChangeForm := False;
 end;
 
 procedure TMainForm.LoadFromIni;
 begin
-  with TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
+  with TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini')) do
+  try
     Left := ReadInteger(sIniSettings, sIniSettingsLeft, Left);
     Top := ReadInteger(sIniSettings, sIniSettingsTop, Top);
     WidthMin := ReadInteger(sIniSettings, sIniSettingsMinWidth, 20);
     WidthMax := ReadInteger(sIniSettings, sIniSettingsMaxWidth, 300);
-    if WidthMax < WidthMin then WidthMax := WidthMin;
+    if WidthMax < WidthMin then
+      WidthMax := WidthMin;
     AlphaBlendValue := ReadInteger(sIniSettings, sIniSettingsAlphaBlendValue, 40);
     tmrMouseLeave.Interval := ReadInteger(sIniSettings, sIniSettingsDelayBeforeMinimize, 300);
     CommandFontSize := ReadInteger(sIniSettings, sIniSettingsCommandFontSize, 30);
     HotKeyFontSize := ReadInteger(sIniSettings, sIniSettingsHotKeyFontSize, 15);
     WindowPosition := ReadString(sIniSettings, sIniSettingsWindowPosition, 'Right');
-    if (WindowPosition <> 'Left') and (WindowPosition <> 'Right') and (WindowPosition <> 'Manual') then WindowPosition := 'Right';
+    if not SameText(WindowPosition, 'Left')
+      and not SameText(WindowPosition, 'Right')
+      and not SameText(WindowPosition, 'Manual')
+    then WindowPosition := 'Right';
     HotKeyPosition := ReadString(sIniSettings, sIniSettingsHotKeyPosition, 'Down');
-    if (HotkeyPosition <> 'Down') and (HotkeyPosition <> 'Right') then HotkeyPosition := 'Right';
+    if not SameText(HotkeyPosition, 'Down')
+      and not SameText(HotkeyPosition, 'Right')
+    then HotkeyPosition := 'Right';
     CommandListName := ReadString(sIniSettings, sIniSettingsCommandFileName, sCommandFileName);
     clList := StringToColor(ReadString(sIniColors, sIniColorsList, 'clWhite'));
     clSelected := StringToColor(ReadString(sIniColors, sIniColorsSelected, 'clLime'));
@@ -420,7 +491,8 @@ end;
 
 procedure TMainForm.SaveToIni;
 begin
-  with TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
+  with TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini')) do
+  try
     WriteInteger(sIniSettings, sIniSettingsLeft, Left);
     WriteInteger(sIniSettings, sIniSettingsTop, Top);
     WriteInteger(sIniSettings, sIniSettingsMinWidth, WidthMin);
@@ -431,7 +503,8 @@ begin
     WriteInteger(sIniSettings, sIniSettingsHotKeyFontSize, HotKeyFontSize);
     WriteString(sIniSettings, sIniSettingsWindowPosition, WindowPosition);
     WriteString(sIniSettings, sIniSettingsHotKeyPosition, HotKeyPosition);
-    WriteString(sIniSettings, sIniSettingsCommandFileName, ExtractRelativePath(IncludeTrailingPathDelimiter(GetCurrentDir), CommandListName));
+    WriteString(sIniSettings, sIniSettingsCommandFileName,
+      ExtractRelativePath(IncludeTrailingPathDelimiter(GetCurrentDir), CommandListName));
     WriteString(sIniColors, sIniColorsList, ColorToString(clList));
     WriteString(sIniColors, sIniColorsSelected, ColorToString(clSelected));
     WriteString(sIniColors, sIniColorsText, ColorToString(clText));
@@ -460,15 +533,18 @@ var
     IsShift := ShortCut and scShift > 0;
     Input.Itype := INPUT_KEYBOARD;
     Input.ki.dwFlags := 0;
-    if IsAlt then begin
+    if IsAlt then
+    begin
       Input.ki.wVk := VK_MENU;
       SendInput(1, Input, SizeOf(Input));
     end;
-    if IsCtrl then begin
+    if IsCtrl then
+    begin
       Input.ki.wVk := VK_CONTROL;
       SendInput(1, Input, SizeOf(Input));
     end;
-    if IsShift then begin
+    if IsShift then
+    begin
       Input.ki.wVk := VK_SHIFT;
       SendInput(1, Input, SizeOf(Input));
     end;
@@ -476,15 +552,18 @@ var
     SendInput(1, Input, SizeOf(Input));
     Input.ki.dwFlags := KEYEVENTF_KEYUP;
     SendInput(1, Input, SizeOf(Input));
-    if IsShift then begin
+    if IsShift then
+    begin
       Input.ki.wVk := VK_SHIFT;
       SendInput(1, Input, SizeOf(Input));
     end;
-    if IsCtrl then begin
+    if IsCtrl then
+    begin
       Input.ki.wVk := VK_CONTROL;
       SendInput(1, Input, SizeOf(Input));
     end;
-    if IsAlt then begin
+    if IsAlt then
+    begin
       Input.ki.wVk := VK_MENU;
       SendInput(1, Input, SizeOf(Input));
     end;
@@ -504,19 +583,25 @@ var
       Clipboard.Close;
     end;
   end;
+
 begin
   SetClipboardText;
   SetForegroundWindow(Target);
-  if IsAltSend then begin
+  if IsAltSend then
+  begin
     OpenKey := TextToShortCut(Commands.AltOpenKey);
     SendKey := TextToShortCut(Commands.AltSendKey);
-  end else begin
+  end
+  else
+  begin
     OpenKey := TextToShortCut(Commands.OpenKey);
     SendKey := TextToShortCut(Commands.SendKey);
   end;
-  if OpenKey > 0 then ClickShortCut(OpenKey);
+  if OpenKey > 0 then
+    ClickShortCut(OpenKey);
   ClickShortCut(TextToShortCut(sPasteShortCut));
-  if not Commands[Tag].IsDelay and (SendKey > 0) then ClickShortCut(SendKey);
+  if not Commands[Tag].IsDelay and (SendKey > 0) then
+    ClickShortCut(SendKey);
   Tag := -1;
 end;
 
@@ -524,10 +609,16 @@ procedure TMainForm.SwitchWindowState(const IsShow: Boolean = False);
 begin
   AlphaBlend := not IsShow and not AlphaBlend;
   IsChangeForm := True;
-  if WindowPosition <> 'Manual' then begin
-    if AlphaBlend then Width := WidthMin else Width := WidthMax;
-    if WindowPosition = 'Left' then Left := 0 else
-      if WindowPosition = 'Right' then Left := Screen.WorkAreaWidth - Width;
+  if not SameText(WindowPosition, 'Manual') then
+  begin
+    if AlphaBlend then
+      Width := WidthMin
+    else Width := WidthMax;
+    if SameText(WindowPosition, 'Left') then
+      Left := Screen.WorkAreaLeft
+    else
+      if SameText(WindowPosition, 'Right') then
+        Left := Screen.WorkAreaWidth - Width;
   end;
   ClientHeight := lsbCommands.ItemRect(lsbCommands.Count - 1).Bottom;
   IsChangeForm := False;
